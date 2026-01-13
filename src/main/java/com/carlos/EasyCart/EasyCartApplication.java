@@ -1,4 +1,4 @@
-package com.example.EasyCart;
+package com.carlos.EasyCart;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

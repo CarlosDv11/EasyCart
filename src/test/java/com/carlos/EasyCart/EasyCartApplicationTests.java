@@ -1,4 +1,4 @@
-package com.example.EasyCart;
+package com.carlos.EasyCart;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
