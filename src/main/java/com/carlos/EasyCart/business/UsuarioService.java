@@ -2,6 +2,7 @@ package com.carlos.EasyCart.business;
 
 import com.carlos.EasyCart.infrastructure.entity.Usuario;
 import com.carlos.EasyCart.infrastructure.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -37,6 +38,19 @@ public class UsuarioService {
     public Usuario buscarPorEmail(String email) {
         return repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
+    }
+
+    @Transactional
+    public Usuario atualizarUsuario(Integer id, Usuario dadosNovos) {
+        Usuario usuarioEntity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuarioEntity.setNome(dadosNovos.getNome());
+        usuarioEntity.setEmail(dadosNovos.getEmail());
+        usuarioEntity.setTelefone(dadosNovos.getTelefone());
+        usuarioEntity.setAtivo(dadosNovos.getAtivo());
+
+        return repository.save(usuarioEntity);
     }
 
 }
