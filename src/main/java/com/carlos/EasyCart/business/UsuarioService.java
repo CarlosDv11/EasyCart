@@ -1,10 +1,14 @@
 package com.carlos.EasyCart.business;
 
+import com.carlos.EasyCart.infrastructure.dto.UsuarioRequestDTO;
+import com.carlos.EasyCart.infrastructure.dto.UsuarioResponseDTO;
 import com.carlos.EasyCart.infrastructure.entity.Usuario;
 import com.carlos.EasyCart.infrastructure.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
@@ -15,17 +19,29 @@ public class UsuarioService {
         this.repository = repository;
     }
 
-    public Usuario salvarUsuario(Usuario usuario) {
-        return repository.save(usuario);
+    public UsuarioResponseDTO salvarUsuario(UsuarioRequestDTO dto) {
+        Usuario usuario = Usuario.builder()
+                .nome(dto.nome())
+                .email(dto.email())
+                .senha(dto.senha())
+                .cpf(dto.cpf())
+                .telefone(dto.telefone())
+                .ativo(dto.ativo() != null ? dto.ativo() : true)
+                .build();
+
+        return converterParaResponseDTO(repository.save(usuario));
     }
 
-    public List<Usuario> buscarTodos() {
-        return repository.findAll();
+    public List<UsuarioResponseDTO> buscarTodos() {
+        return repository.findAll().stream()
+                .map(this::converterParaResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Usuario buscarPorId(Integer id) {
-        return repository.findById(id)
+    public UsuarioResponseDTO buscarPorId(Integer id) {
+        Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
+        return converterParaResponseDTO(usuario);
     }
 
     public void deletarUsuario(Integer id) {
@@ -35,22 +51,33 @@ public class UsuarioService {
         repository.deleteById(id);
     }
 
-    public Usuario buscarPorEmail(String email) {
-        return repository.findByEmail(email)
+    public UsuarioResponseDTO buscarPorEmail(String email) {
+        Usuario usuario = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
+        return converterParaResponseDTO(usuario);
     }
 
     @Transactional
-    public Usuario atualizarUsuario(Integer id, Usuario dadosNovos) {
+    public UsuarioResponseDTO atualizarUsuario(Integer id, UsuarioRequestDTO dto) {
         Usuario usuarioEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        usuarioEntity.setNome(dadosNovos.getNome());
-        usuarioEntity.setEmail(dadosNovos.getEmail());
-        usuarioEntity.setTelefone(dadosNovos.getTelefone());
-        usuarioEntity.setAtivo(dadosNovos.getAtivo());
+        if (dto.nome() != null) usuarioEntity.setNome(dto.nome());
+        if (dto.email() != null) usuarioEntity.setEmail(dto.email());
+        if (dto.telefone() != null) usuarioEntity.setTelefone(dto.telefone());
+        if (dto.ativo() != null) usuarioEntity.setAtivo(dto.ativo());
 
-        return repository.save(usuarioEntity);
+        return converterParaResponseDTO(repository.save(usuarioEntity));
     }
 
+    private UsuarioResponseDTO converterParaResponseDTO(Usuario entity) {
+        return new UsuarioResponseDTO(
+                entity.getId(),
+                entity.getNome(),
+                entity.getEmail(),
+                entity.getTelefone(),
+                entity.getAtivo(),
+                entity.getDataCriacao()
+        );
+    }
 }
