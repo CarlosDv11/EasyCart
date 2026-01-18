@@ -2,9 +2,11 @@ package com.carlos.EasyCart.business;
 
 import com.carlos.EasyCart.infrastructure.dto.UsuarioRequestDTO;
 import com.carlos.EasyCart.infrastructure.dto.UsuarioResponseDTO;
+import com.carlos.EasyCart.infrastructure.entity.UserRole;
 import com.carlos.EasyCart.infrastructure.entity.Usuario;
 import com.carlos.EasyCart.infrastructure.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,18 +16,21 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository repository) {
+    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder ) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UsuarioResponseDTO salvarUsuario(UsuarioRequestDTO dto) {
         Usuario usuario = Usuario.builder()
                 .nome(dto.nome())
                 .email(dto.email())
-                .senha(dto.senha())
+                .senha(passwordEncoder.encode(dto.senha()))
                 .cpf(dto.cpf())
                 .telefone(dto.telefone())
+                .role(UserRole.USER)
                 .ativo(dto.ativo() != null ? dto.ativo() : true)
                 .build();
 
