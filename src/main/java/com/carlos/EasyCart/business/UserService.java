@@ -1,10 +1,10 @@
 package com.carlos.EasyCart.business;
 
-import com.carlos.EasyCart.infrastructure.dto.UsuarioRequestDTO;
-import com.carlos.EasyCart.infrastructure.dto.UsuarioResponseDTO;
+import com.carlos.EasyCart.infrastructure.dto.UserRequestDTO;
+import com.carlos.EasyCart.infrastructure.dto.UserResponseDTO;
 import com.carlos.EasyCart.infrastructure.entity.UserRole;
-import com.carlos.EasyCart.infrastructure.entity.Usuario;
-import com.carlos.EasyCart.infrastructure.repository.UsuarioRepository;
+import com.carlos.EasyCart.infrastructure.entity.User;
+import com.carlos.EasyCart.infrastructure.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UsuarioService {
+public class UserService {
 
-    private final UsuarioRepository repository;
+    private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder ) {
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UsuarioResponseDTO salvarUsuario(UsuarioRequestDTO dto) {
-        Usuario usuario = Usuario.builder()
+    public UserResponseDTO salvarUsuario(UserRequestDTO dto) {
+        User user = User.builder()
                 .nome(dto.nome())
                 .email(dto.email())
                 .senha(passwordEncoder.encode(dto.senha()))
@@ -34,19 +34,19 @@ public class UsuarioService {
                 .ativo(dto.ativo() != null ? dto.ativo() : true)
                 .build();
 
-        return converterParaResponseDTO(repository.save(usuario));
+        return converterParaResponseDTO(repository.save(user));
     }
 
-    public List<UsuarioResponseDTO> buscarTodos() {
+    public List<UserResponseDTO> buscarTodos() {
         return repository.findAll().stream()
                 .map(this::converterParaResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public UsuarioResponseDTO buscarPorId(Integer id) {
-        Usuario usuario = repository.findById(id)
+    public UserResponseDTO buscarPorId(Integer id) {
+        User user = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
-        return converterParaResponseDTO(usuario);
+        return converterParaResponseDTO(user);
     }
 
     public void deletarUsuario(Integer id) {
@@ -56,27 +56,27 @@ public class UsuarioService {
         repository.deleteById(id);
     }
 
-    public UsuarioResponseDTO buscarPorEmail(String email) {
-        Usuario usuario = repository.findByEmail(email)
+    public UserResponseDTO buscarPorEmail(String email) {
+        User user = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
-        return converterParaResponseDTO(usuario);
+        return converterParaResponseDTO(user);
     }
 
     @Transactional
-    public UsuarioResponseDTO atualizarUsuario(Integer id, UsuarioRequestDTO dto) {
-        Usuario usuarioEntity = repository.findById(id)
+    public UserResponseDTO atualizarUsuario(Integer id, UserRequestDTO dto) {
+        User userEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        if (dto.nome() != null) usuarioEntity.setNome(dto.nome());
-        if (dto.email() != null) usuarioEntity.setEmail(dto.email());
-        if (dto.telefone() != null) usuarioEntity.setTelefone(dto.telefone());
-        if (dto.ativo() != null) usuarioEntity.setAtivo(dto.ativo());
+        if (dto.nome() != null) userEntity.setNome(dto.nome());
+        if (dto.email() != null) userEntity.setEmail(dto.email());
+        if (dto.telefone() != null) userEntity.setTelefone(dto.telefone());
+        if (dto.ativo() != null) userEntity.setAtivo(dto.ativo());
 
-        return converterParaResponseDTO(repository.save(usuarioEntity));
+        return converterParaResponseDTO(repository.save(userEntity));
     }
 
-    private UsuarioResponseDTO converterParaResponseDTO(Usuario entity) {
-        return new UsuarioResponseDTO(
+    private UserResponseDTO converterParaResponseDTO(User entity) {
+        return new UserResponseDTO(
                 entity.getId(),
                 entity.getNome(),
                 entity.getEmail(),

@@ -1,6 +1,6 @@
 package com.carlos.EasyCart.infrastructure.dto;
 
-public record UsuarioRequestDTO(
+public record UserRequestDTO(
         String nome,
         String email,
         String senha,

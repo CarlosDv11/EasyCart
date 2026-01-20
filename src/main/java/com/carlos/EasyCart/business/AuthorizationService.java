@@ -1,6 +1,6 @@
 package com.carlos.EasyCart.business;
 
-import com.carlos.EasyCart.infrastructure.repository.UsuarioRepository;
+import com.carlos.EasyCart.infrastructure.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorizationService implements UserDetailsService {
 
-    private final UsuarioRepository repository;
+    private final UserRepository repository;
 
-    public AuthorizationService(UsuarioRepository repository){
+    public AuthorizationService(UserRepository repository){
         this.repository = repository;
     }
 

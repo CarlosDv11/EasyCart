@@ -2,7 +2,7 @@ package com.carlos.EasyCart.infrastructure.dto;
 
 import java.time.LocalDateTime;
 
-public record UsuarioResponseDTO(
+public record UserResponseDTO(
         Integer id,
         String nome,
         String email,
