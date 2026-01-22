@@ -25,13 +25,13 @@ public class UserService {
 
     public UserResponseDTO salvarUsuario(UserRequestDTO dto) {
         User user = User.builder()
-                .nome(dto.nome())
+                .name(dto.nome())
                 .email(dto.email())
-                .senha(passwordEncoder.encode(dto.senha()))
+                .password(passwordEncoder.encode(dto.senha()))
                 .cpf(dto.cpf())
-                .telefone(dto.telefone())
+                .phone(dto.telefone())
                 .role(UserRole.USER)
-                .ativo(dto.ativo() != null ? dto.ativo() : true)
+                .active(dto.ativo() != null ? dto.ativo() : true)
                 .build();
 
         return converterParaResponseDTO(repository.save(user));
@@ -67,10 +67,10 @@ public class UserService {
         User userEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        if (dto.nome() != null) userEntity.setNome(dto.nome());
+        if (dto.nome() != null) userEntity.setName(dto.nome());
         if (dto.email() != null) userEntity.setEmail(dto.email());
-        if (dto.telefone() != null) userEntity.setTelefone(dto.telefone());
-        if (dto.ativo() != null) userEntity.setAtivo(dto.ativo());
+        if (dto.telefone() != null) userEntity.setPhone(dto.telefone());
+        if (dto.ativo() != null) userEntity.setActive(dto.ativo());
 
         return converterParaResponseDTO(repository.save(userEntity));
     }
@@ -78,11 +78,11 @@ public class UserService {
     private UserResponseDTO converterParaResponseDTO(User entity) {
         return new UserResponseDTO(
                 entity.getId(),
-                entity.getNome(),
+                entity.getName(),
                 entity.getEmail(),
-                entity.getTelefone(),
-                entity.getAtivo(),
-                entity.getDataCriacao()
+                entity.getPhone(),
+                entity.getActive(),
+                entity.getCreatedAt()
         );
     }
 }

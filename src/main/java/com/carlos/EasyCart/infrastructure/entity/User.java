@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "usuarios")
+@Table(name = "users")
 @Entity
 public class User implements UserDetails {
 
@@ -25,27 +25,34 @@ public class User implements UserDetails {
     private Integer id;
 
     @Column(nullable = false)
-    private String nome;
+    private String name;
 
     @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
-    private String senha;
+    private String password;
 
     @Column(unique = true, length = 11)
     private String cpf;
 
-    private Boolean ativo = true;
+    private Boolean active = true;
 
     @CreationTimestamp
-    @Column(name = "data_criacao", updatable = false)
-    private LocalDateTime dataCriacao;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-    private String telefone;
+    private String phone;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    public User(String email, String password, String role) {
+        this.email = email;
+        this.password = password;
+        this.role = UserRole.valueOf(role.toUpperCase());
+        this.active = true;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -57,7 +64,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return senha;
+        return password;
     }
 
     @Override
@@ -82,6 +89,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return ativo;
+        return active;
     }
 }
